@@ -62,7 +62,6 @@ public class TournamentTasksService
 
     public int ComparePrizes(string prizeA, string prizeB)
     {
-
         decimal A = decimal.Parse(prizeA);
         decimal B = decimal.Parse(prizeB);
 
