@@ -1,0 +1,15 @@
+﻿<div class="row my-3">
+    <div class="col col-lg-4 team-header-logo">
+        <img class="img-fluid" style="height: 100%;" src=@($"images/teamlogo/{TeamId}.png") />
+    </div>
+    <div class="col-lg-8 text-center team-header-text">
+        @TeamName
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public int TeamId { get; set; }
+    [Parameter]
+    public string TeamName { get; set; }
+}

@@ -1,0 +1,69 @@
+﻿@page "/calculateRating"
+
+@using CyberSportsPortal.Data.Entities
+@using CyberSportsPortal.Core.OlympiadServices
+@using CyberSportsPortal.Core.Services
+@using CyberSportsPortal.Data.Model.Views
+
+@inject TournamentService TournamentService
+@inject RatingService RatingService
+@inject MatchHistoryService MatchHistoryService
+@inject TeamTasksService TeamTasksService
+
+@if (lastTournament == null || ratings == null || matches == null)
+{
+    <Spin size="large" Tip="Загрузка" />
+}
+else
+{
+    <Table @ref="@ratingsTable"
+    Title=@($"Рейтинг после турнира: {lastTournament.Name}")
+    TItem="RatingInfo"
+    DataSource="@ratingInfos"
+    ScrollY="500px"
+    Bordered
+    HidePagination
+    PageSize=1000>
+        <Column Title="Команда" Field="@context.TeamName" />
+        <Column Title="Рейтинг до турнира" Field="@context.OldRating" />
+        <Column Title="Рейтинг после турнира" Field="@context.NewRating" />
+    </Table>
+}
+
+
+@code {
+    private ITable ratingsTable;
+    private Tournament lastTournament;
+    private List<Rating> ratings;
+    private List<MatchHistory> matches;
+    private List<Rating> newRatings;
+    private List<RatingInfo> ratingInfos;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            lastTournament = await TournamentService.GetLastTournamentAsync();
+            ratings = await RatingService.GetTournamentParticipantsRatingAsync(lastTournament);
+            matches = await MatchHistoryService.GetTournamentMatchHistoryAsync(lastTournament.Id);
+            newRatings = TeamTasksService.GetNewRatings(matches, ratings);
+            CreateRatingInfos(ratings, newRatings);
+            StateHasChanged();
+        }
+    }
+
+    private void CreateRatingInfos(List<Rating> oldRatings, List<Rating> newRatings)
+    {
+        ratingInfos = new List<RatingInfo>();
+        foreach (var rating in oldRatings)
+        {
+            ratingInfos.Add(new RatingInfo
+                {
+                    TeamName = rating.Team.Name,
+                    OldRating = rating.Score,
+                    NewRating = newRatings.First(x => x.TeamId == rating.TeamId).Score,
+                });
+        }
+        ratingInfos = ratingInfos.OrderByDescending(x => x.NewRating).ToList();
+    }
+}

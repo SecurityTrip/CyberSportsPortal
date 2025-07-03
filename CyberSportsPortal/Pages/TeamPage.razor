@@ -1,0 +1,47 @@
+﻿@page "/teams/{TeamId:int}"
+@using CyberSportsPortal.Components.Players
+@using CyberSportsPortal.Components.Teams
+@using CyberSportsPortal.Core.Mappers
+@using CyberSportsPortal.Core.Services
+@using CyberSportsPortal.Data.Entities
+
+@inject TeamService TeamService
+@inject PlayerMapper PlayerMapper
+
+
+@if (Team == null)
+{
+    <Spin size="large" Tip="Загрузка" />
+}
+else
+{
+    <div class="container">
+        <TeamHeader TeamId="@TeamId" TeamName="@Team.Name" />
+        <Tabs DefaultActiveKey="1" Type="@TabType.Card" Size="@TabSize.Large">
+            <TabPane Key="1" Tab="Информация">
+                <div class="container">
+                    <PlayersTable Players="@PlayerMapper.MapList(Team.Players.ToList())" ShowTeam=false Title="Состав"></PlayersTable>
+                </div>
+            </TabPane>
+            <TabPane Key="2" Tab="Результаты">
+                <TeamIncome Team="@Team"></TeamIncome>
+            </TabPane>
+        </Tabs>
+    </div>
+}
+
+@code {
+    [Parameter]
+    public int TeamId { get; set; }
+
+    private Team Team { get; set; }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            Team = await TeamService.GetTeamByIdAsync(TeamId);
+            StateHasChanged();
+        }
+    }
+}

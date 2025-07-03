@@ -1,0 +1,31 @@
+﻿@page "/tournaments"
+
+@using CyberSportsPortal.Components.Tournaments
+@using CyberSportsPortal.Core.Services
+@using CyberSportsPortal.Data.Model.Views
+
+@inject TournamentService TournamentService
+
+<h1>Турниры</h1>
+
+@if (tournaments == null)
+{
+    <Spin size="large" Tip="Загрузка"/>
+}
+else
+{
+    <TounamentsTable tournaments="@tournaments"/>
+}
+
+@code {
+    private List<TournamentView> tournaments;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            tournaments = await TournamentService.GetTournamentsAsync();
+            StateHasChanged();
+        }
+    }
+}

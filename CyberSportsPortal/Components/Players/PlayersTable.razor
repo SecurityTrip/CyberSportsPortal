@@ -1,0 +1,40 @@
+﻿@using CyberSportsPortal.Data.Model.Views
+@using AntDesign.TableModels
+@using CyberSportsPortal.Services
+
+@inject CountryFlagService CountryFlagService
+
+<Table @ref="@playersTable"
+       Title="@Title"
+       TItem="PlayerView"
+       DataSource="@Players"
+       ScrollY="500px"
+       OnRow="OnRow"
+       Bordered
+       HidePagination
+       PageSize=1000>
+    <Column Title="Игрок" Field="@context.NickName">
+        <span class="flag-icon @CountryFlagService.GetFlagClassName(context.Country)"></span> @context.NickName
+    </Column>
+    <Column Title="Имя" Field="@context.CombinedName" />
+    @if (ShowTeam)
+    {
+        <Column Title="Команда" Field="@context.TeamName" />
+    }
+</Table>
+
+@code {
+    private ITable playersTable;
+
+    [Parameter]
+    public List<PlayerView> Players { get; set; }
+    [Parameter]
+    public bool ShowTeam { get; set; }
+    [Parameter]
+    public string Title { get; set; }
+
+    private Dictionary<string, object> OnRow(RowData<PlayerView> row) => new()
+    {
+        ["style"] = "background:darkgrey"
+    };
+}

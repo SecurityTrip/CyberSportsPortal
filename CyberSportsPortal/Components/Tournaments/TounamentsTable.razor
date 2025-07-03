@@ -1,0 +1,81 @@
+﻿@using CyberSportsPortal.Core.OlympiadServices
+@using CyberSportsPortal.Core.Services
+@using CyberSportsPortal.Data.Entities
+@using CyberSportsPortal.Data.Model.Views
+
+@inject TournamentService TournamentService
+@inject ModalService _modalService
+@inject NavigationManager NavigationManager
+@inject TournamentTasksService TournamentTasksService
+
+<Table @ref="@tournamentsTable" TItem="TournamentView" DataSource="@tournaments" HidePagination="@true">
+    <Column Title="Название" @bind-Field="@context.Name" />
+    <Column Title="Организатор" @bind-Field="@context.Organizer" />
+    <Column Title="Статус" @bind-Field="@context.Status" />
+    <ActionColumn Title="Призы">
+        <Space>
+            <SpaceItem>
+                <Button OnClick="()=>OpenPrizes(context.Id)">Призы</Button>
+            </SpaceItem>
+        </Space>
+    </ActionColumn>
+    <ActionColumn Title="Подробнее">
+        <Space>
+            <SpaceItem>
+                <Button OnClick="()=>OpenTournament(context.Id)">Информация</Button>
+            </SpaceItem>
+        </Space>
+    </ActionColumn>
+</Table>
+<Modal Title="Таблица призов"
+       Visible="@_visible"
+       Centered="@true"
+       Footer="@null"
+       Closable="@false"
+       OnCancel="@HandleCancel">
+    <Table @ref="@prizesTable"
+           TItem="TournamentPrize"
+           DataSource="@tournamentPrizes"
+           Context="prize"
+           PageSize=20
+           HidePagination>
+        <Column Title="Место" @bind-Field="@prize.Place" />
+        <Column Title="Приз"
+            @bind-Field="@prize.Prize"
+            SorterCompare="@((a,b) => SortPrizes(a,b))"
+            SortDirections="new[] { SortDirection.Ascending, SortDirection.Descending }">
+                @(prize.Prize.ToString("C0"))
+        </Column>
+    </Table>
+</Modal>
+
+@code {
+    private ITable tournamentsTable;
+    private ITable prizesTable;
+
+    [Parameter]
+    public List<TournamentView> tournaments { get; set; }
+    private List<TournamentPrize> tournamentPrizes { get; set; }
+    bool _visible = false;
+
+    private void HandleCancel(MouseEventArgs e)
+    {
+        _visible = false;
+    }
+
+    private void OpenPrizes(int id)
+    {
+        tournamentPrizes = TournamentService.GetTournamentPrizesAsync(id);
+        _visible = true;
+    }
+
+    private void OpenTournament(int id)
+    {
+        NavigationManager.NavigateTo($"/tournaments/{id}");
+    }
+
+    private int SortPrizes(int a, int b)
+    {
+        return TournamentTasksService.ComparePrizes(a.ToString(), b.ToString());
+    }
+}

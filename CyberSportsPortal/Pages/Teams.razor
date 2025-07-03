@@ -1,0 +1,41 @@
+﻿@page "/teams"
+@using CyberSportsPortal.Components.Teams
+@using CyberSportsPortal.Core.OlympiadServices
+@using CyberSportsPortal.Core.Services
+@using CyberSportsPortal.Data.Entities
+@using CyberSportsPortal.Data.Model.Views
+
+@inject TeamService TeamService
+
+<h1>Список команд</h1>
+
+@if (teams == null)
+{
+    <Spin size="large" Tip="Загрузка" />
+}
+else
+{
+    <div style="padding-bottom:25px">
+        <Card Title=@("Команды")>
+            @foreach (var team in teams)
+            {
+                <CardGrid Style="width: 25%; text-align: center; padding:10px" Hoverable="true">
+                    <TeamCardWithLogo Team=@team />
+                </CardGrid>
+            }
+        </Card>
+    </div>
+}
+
+@code {
+    private List<Team> teams;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            teams = await TeamService.GetTeamsAsync();
+            StateHasChanged();
+        }
+    }
+}

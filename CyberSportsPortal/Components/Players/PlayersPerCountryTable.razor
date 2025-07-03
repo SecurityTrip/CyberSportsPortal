@@ -1,0 +1,25 @@
+﻿@using CyberSportsPortal.Data.Model.Views
+@using AntDesign.TableModels
+@using CyberSportsPortal.Services
+
+@inject CountryFlagService CountryFlagService
+
+<Table @ref="@playersPerCountryTable"
+       Title="Участники по странам"
+       TItem="PlayersPerCountry"
+       DataSource="@PlayersPerCountries"
+       Bordered
+       HidePagination
+       PageSize=1000>
+    <Column Title="Страна" Field="@context.Country">
+        <span class="flag-icon @CountryFlagService.GetFlagClassName(context.Country)"></span> @context.Country.ToString()
+    </Column>
+    <Column Title="Количество игроков" Field="@context.PlayersCount" />
+</Table>
+
+@code {
+    private ITable playersPerCountryTable;
+
+    [Parameter]
+    public List<PlayersPerCountry> PlayersPerCountries { get; set; }
+}

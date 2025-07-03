@@ -1,0 +1,44 @@
+﻿@page "/players"
+@using CyberSportsPortal.Components.Players
+@using CyberSportsPortal.Core.OlympiadServices
+@using CyberSportsPortal.Core.Services
+@using CyberSportsPortal.Data.Model.Views
+
+@inject PlayerService PlayerService
+@inject PlayerTasksService PlayerTasksService
+
+<h1>Игроки</h1>
+
+@if (players == null)
+{
+    <Spin size="large" Tip="Loading" />
+}
+else
+{
+    <div class="overflow-auto">
+        <input value="@playersFilter" placeholder="Поиск игроков" @oninput="@((ChangeEventArgs e) => FilterChanged(e))"/>
+        <PlayersTable Players="filteredPlayers" ShowTeam=true Title="Игроки" />
+    </div>
+}
+
+@code {
+    private List<PlayerView> players;
+    private string playersFilter = string.Empty;
+    private List<PlayerView> filteredPlayers;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            players = await PlayerService.GetPlayersAsync();
+            filteredPlayers = players;
+            StateHasChanged();
+        }
+    }
+
+    private void FilterChanged(ChangeEventArgs e)
+    {
+        filteredPlayers = PlayerTasksService.FilterPlayers(players, e?.Value?.ToString());
+        playersFilter = e?.Value?.ToString();
+    }
+}

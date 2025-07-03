@@ -1,0 +1,19 @@
+﻿.team-card-container {
+    height: 200px;
+    padding: 0px;
+}
+
+.team-card-logo {
+    height:80%;
+    vertical-align: middle;
+}
+
+.team-logo {
+    max-height:100%;
+    vertical-align:middle;
+}
+
+.team-name-container {
+    height:20%;
+    line-height:40px;
+}

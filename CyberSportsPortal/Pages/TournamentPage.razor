@@ -1,0 +1,56 @@
+﻿@page "/tournaments/{TournamentId:int}"
+
+@using CyberSportsPortal.Core.Services
+@using CyberSportsPortal.Data.Entities
+@using CyberSportsPortal.Data.Model.Views
+@using CyberSportsPortal.Components.Tournaments
+@using CyberSportsPortal.Components.Players
+
+@inject TournamentService TournamentService
+
+@if (Tournament == null)
+{
+    <Spin size="large" Tip="Загрузка" />
+}
+else
+{
+    <div class="container">
+        <TournamentHeader TournamentId="@TournamentId"
+        TournamentName="@Tournament.Name" />
+        <Tabs DefaultActiveKey="1" Type="@TabType.Card" Size="@TabSize.Large">
+            <TabPane Key="1" Tab="Информация">
+                <div class="container">
+                    <TeamParticipantsCard Teams="@Teams"/>
+                    <br><br>
+                    <PlayersPerCountryTable PlayersPerCountries="@PlayersPerCountries"/>
+                </div>
+            </TabPane>
+            @if(Tournament.StartDate <= DateTime.Now)
+            {
+                <TabPane Key="2" Tab="Результаты">
+                    <TournamentResultsTable Tournament="@Tournament" />
+                </TabPane>
+            }
+        </Tabs>
+    </div>
+}
+
+@code {
+    [Parameter]
+    public int TournamentId { get; set; }
+
+    private Tournament Tournament { get; set; }
+    private List<PlayersPerCountry> PlayersPerCountries { get; set; }
+    private List<Team> Teams { get; set; }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            Tournament = await TournamentService.GetTournamentByIdAsync(TournamentId);
+            PlayersPerCountries = TournamentService.GetPlayersPerCountries(Tournament);
+            Teams = Tournament.TeamParticipantInfos.Select(x => x.Team).ToList();
+            StateHasChanged();
+        }
+    }
+}

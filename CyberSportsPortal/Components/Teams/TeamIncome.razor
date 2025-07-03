@@ -1,0 +1,43 @@
+﻿@using CyberSportsPortal.Core.OlympiadServices
+@using CyberSportsPortal.Core.Services
+@using CyberSportsPortal.Data.Entities
+
+@inject TeamTasksService TeamTasksService
+
+<Card Title="Доход команды за год" Style="width: 600px">
+    <body>
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-md-4">
+                    <DatePicker TValue="DateTime?" Picker="@DatePickerType.Year" Placeholder="@DatePlaceholder" OnChange="@DatePicked"  OnClearClick="@ClearDate" />
+                </div>
+                <div class="col-md-8 text-md-center">
+                    <p>@($"Доход за {IncomeYear} год: {Income.ToString("C0")}")</p>
+                </div>
+            </div>
+        </div>
+    </body>
+</Card>
+
+@code {
+    private string DatePlaceholder = "Выберите год";
+    private int Income = 0;
+    private int IncomeYear = 0;
+
+    [Parameter]
+    public Team Team { get; set; }
+
+    private void DatePicked (DateTimeChangedEventArgs e)
+    {
+        IncomeYear = e.Date.Year;
+        Income = TeamTasksService.GetTeamIncomeForYear(Team, IncomeYear);
+        StateHasChanged();
+    }
+
+    private void ClearDate()
+    {
+        IncomeYear = 0;
+        Income = 0;
+        StateHasChanged();
+    }
+}

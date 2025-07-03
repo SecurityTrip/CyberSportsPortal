@@ -1,0 +1,43 @@
+﻿@using CyberSportsPortal.Data.Entities
+
+@if (views == null)
+{
+    <Spin size="large" Tip="Загрузка" />
+}
+else
+{
+    <Table @ref="@resultsTable"
+       Title="Результаты турнира"
+       TItem="TournamentResultView"
+       DataSource="@views"
+       Bordered
+       HidePagination
+       PageSize=1000>
+        <Column Title="Имя команды" Field="@context.TeamName" Width="50%" />
+        <Column Title="Место" Field="@context.Place" Width="50%"/>
+    </Table>
+}
+
+@code {
+    private ITable resultsTable;
+    private List<TournamentResultView> views;
+
+    [Parameter]
+    public Tournament Tournament { get; set; }
+
+    protected override void OnInitialized()
+    {
+        views = Tournament.TeamParticipantInfos
+            .Select(x => new TournamentResultView { TeamName = x.Team.Name, Place = x.Place.Value })
+            .OrderBy(x => x.Place)
+            .ToList();
+        base.OnInitialized();
+    }
+
+    private class TournamentResultView
+    {
+        public string TeamName { get; set; }
+        public int Place { get; set; }
+    }
+
+}

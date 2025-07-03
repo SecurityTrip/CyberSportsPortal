@@ -1,0 +1,22 @@
+﻿@using CyberSportsPortal.Data.Entities
+
+@inject NavigationManager NavigationManager
+
+<div class="container border team-card-container" @onclick="(() => NavigateToTeamPage(Team.Id))">
+    <div class="col-md-12 py-3 team-card-logo">
+        <img class="img-fluid team-logo" src=@($"images/teamlogo/{Team.Id}.png") />
+    </div>
+    <div class="col-md-12 border-top team-name-container">
+        <span class="align-middle">@Team.Name</span>
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public Team Team { get; set; }
+
+    private void NavigateToTeamPage(int teamId)
+    {
+        NavigationManager.NavigateTo($"/teams/{teamId}");
+    }
+}
