@@ -47,7 +47,7 @@ public class AdvertisementTasksService
 
             if (total > 0)
             {
-                probability = (int)Math.Floor(payments / total) == 0 ? 1 : (int)Math.Floor(payments / total);
+                probability = (int)Math.Floor(payments * 100 / total);
             }
 
             weights.Add(new KeyValuePair<int, int>(company.Id, probability));
