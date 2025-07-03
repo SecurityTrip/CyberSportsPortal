@@ -43,9 +43,62 @@ public class TeamTasksService
 
         return result;
     }
-
     public List<Rating> GetNewRatings(List<MatchHistory> matches, List<Rating> oldRatings)
     {
-        return oldRatings;
+        if (matches == null || !matches.Any() || oldRatings == null || !oldRatings.Any())
+            return oldRatings;
+
+        var currentRatings = oldRatings.ToDictionary(r => r.TeamId, r => r.Score);
+
+        var sortedMatches = matches.OrderBy(m => m.Date).ToList();
+
+        foreach (var match in sortedMatches)
+        {
+            if (!currentRatings.ContainsKey(match.WinnerId) || !currentRatings.ContainsKey(match.LoserId))
+                continue;
+
+            var winnerRating = currentRatings[match.WinnerId];
+            var loserRating = currentRatings[match.LoserId];
+
+            int ratingChange;
+
+            if (winnerRating == loserRating)
+            {
+                ratingChange = (int)(loserRating * 0.1);
+            }
+            else if (winnerRating < loserRating)
+            {
+                ratingChange = (int)(loserRating * 0.1);
+            }
+            else
+            {
+                ratingChange = (int)(loserRating * 0.01);
+            }
+
+            currentRatings[match.WinnerId] += ratingChange;
+            currentRatings[match.LoserId] -= ratingChange;
+
+            if (currentRatings[match.LoserId] < 0)
+            {
+                currentRatings[match.WinnerId] += currentRatings[match.LoserId];
+                currentRatings[match.LoserId] = 0;
+            }
+        }
+
+        var newRatings = new List<Rating>();
+        var currentMoment = DateTimeOffset.UtcNow;
+
+        foreach (var rating in oldRatings)
+        {
+            newRatings.Add(new Rating
+            {
+                TeamId = rating.TeamId,
+                Score = currentRatings[rating.TeamId],
+                AtMoment = currentMoment,
+                Team = rating.Team
+            });
+        }
+
+        return newRatings;
     }
 }
