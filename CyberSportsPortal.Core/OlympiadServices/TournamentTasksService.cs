@@ -27,10 +27,13 @@ public class TournamentTasksService
 
     public int GetPlayersFromCountryCount(List<Player> players, Country country)
     {
+        if (players == null || country == null)
+            return 0;
+
         var count = 0;
         foreach(Player player in players)
         {
-            if (player.Country == country)
+            if (player?.Country == country)
                 count++;
         }
         return count;
@@ -38,9 +41,15 @@ public class TournamentTasksService
 
     public string GetTeamParticipantsNameString(List<Team> teams)
     {
+        if (teams == null || teams.Count == 0)
+            return string.Empty;
+
         string result = string.Empty;
         for (int i = 0; i < teams.Count; i++)
         {
+            if (teams[i]?.Name == null)
+                continue;
+
             if(i < teams.Count - 1)
             {
                 result += teams[i].Name + ", ";
