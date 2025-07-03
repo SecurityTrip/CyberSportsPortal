@@ -27,7 +27,12 @@ public class TeamService
 
     public async Task<Team> GetTeamByIdAsync(int id)
     {
-        return await _context.Teams.Include(x => x.Players).FirstOrDefaultAsync(x => x.Id == id);
+        return await _context.Teams
+            .Include(x => x.Players)
+            .Include(x => x.TeamTournamentResults)
+                .ThenInclude(x => x.Tournament)
+                    .ThenInclude(x => x.TournamentPrizes)
+            .FirstOrDefaultAsync(x => x.Id == id);
     }
 
     public async Task<List<TeamWithVictoryProbabilities>> GetTeamsWithVictoryProbabilitiesForTournament(List<int> teamIds)

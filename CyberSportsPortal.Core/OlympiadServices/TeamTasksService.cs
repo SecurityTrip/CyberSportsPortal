@@ -14,7 +14,7 @@ public class TeamTasksService
 
         int result = 0;
 
-        var tournaments = team.TeamTournamentResults ?? Enumerable.Empty<TournamentParticipantInfo>();
+        var tournaments = team.TeamTournamentResults;
 
         foreach (var t in tournaments)
         {
@@ -27,7 +27,7 @@ public class TeamTasksService
             if (t.Tournament.EndDate.Year != year)
                 continue;
 
-            var prizes = t.Tournament.TournamentPrizes ?? Enumerable.Empty<TournamentPrize>();
+            var prizes = t.Tournament.TournamentPrizes;
 
             foreach (var p in prizes)
             {
