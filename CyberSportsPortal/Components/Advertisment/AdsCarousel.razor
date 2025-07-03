@@ -34,7 +34,7 @@
 
     protected override void OnAfterRender(bool firstRender)
     {
-        if (firstRender && adsProbabilities.Count > 0)
+        if (firstRender && adsProbabilities != null && adsProbabilities.Count > 0)
         {
             ShowNextAd();
         }
