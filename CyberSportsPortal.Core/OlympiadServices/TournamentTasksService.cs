@@ -27,7 +27,13 @@ public class TournamentTasksService
 
     public int GetPlayersFromCountryCount(List<Player> players, Country country)
     {
-        return 0;
+        var count = 0;
+        foreach(Player player in players)
+        {
+            if (player.Country == country)
+                count++;
+        }
+        return count;
     }
 
     public string GetTeamParticipantsNameString(List<Team> teams)
@@ -35,7 +41,11 @@ public class TournamentTasksService
         string result = string.Empty;
         for (int i = 0; i < teams.Count; i++)
         {
-            result += teams[i].Name + ", ";
+            if(i < teams.Count - 1)
+            {
+                result += teams[i].Name + ", ";
+            }
+            else result += teams[i].Name;
         }
 
         return result;
