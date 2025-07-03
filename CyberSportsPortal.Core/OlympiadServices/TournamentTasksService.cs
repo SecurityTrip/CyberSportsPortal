@@ -41,7 +41,11 @@ public class TournamentTasksService
         string result = string.Empty;
         for (int i = 0; i < teams.Count; i++)
         {
-            result += teams[i].Name + ", ";
+            if(i < teams.Count - 1)
+            {
+                result += teams[i].Name + ", ";
+            }
+            else result += teams[i].Name;
         }
 
         return result;
