@@ -62,12 +62,13 @@ public class TournamentTasksService
 
     public int ComparePrizes(string prizeA, string prizeB)
     {
-        if (prizeA == prizeB)
-            return 0;
-        if (prizeA[prizeA.Length - 1] > prizeB[prizeB.Length - 1])
-            return 1;
-        else
-            return -1;
+
+        decimal A = decimal.Parse(prizeA);
+        decimal B = decimal.Parse(prizeB);
+
+        if (A > B) return 1;
+        if (A < B) return -1;
+        else return 0;
     }
 
     public Dictionary<int, decimal> GetTournamentVictoryProbabilities(List<TeamWithVictoryProbabilities> teams, Dictionary<int, int> standings)
