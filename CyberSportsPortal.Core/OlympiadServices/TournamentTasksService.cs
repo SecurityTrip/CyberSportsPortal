@@ -1,7 +1,10 @@
 ﻿using CyberSportsPortal.Data.Entities;
 using CyberSportsPortal.Data.Model.Enums;
 using CyberSportsPortal.Data.Model.Views;
+using System;
 using System.Collections.Generic;
+using System.Data;
+using System.Diagnostics.Eventing.Reader;
 
 namespace CyberSportsPortal.Core.OlympiadServices;
 
@@ -9,7 +12,17 @@ public class TournamentTasksService
 {
     public string GetTournamentStatus(Tournament tournament)
     {
-        return string.Empty;
+        var currentDate = DateTime.UtcNow;
+        if (tournament.EndDate <= currentDate)
+        {
+            return "Окончен";
+        }
+        else if (tournament.StartDate > currentDate)
+        {
+            return "Не начался";
+        }
+
+        return "В процессе";
     }
 
     public int GetPlayersFromCountryCount(List<Player> players, Country country)

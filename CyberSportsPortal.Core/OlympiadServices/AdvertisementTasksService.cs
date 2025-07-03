@@ -12,5 +12,6 @@ public class AdvertisementTasksService
             new KeyValuePair<int, int>(1,50),
             new KeyValuePair<int, int>(2,50)
         };
+
     }
 }
