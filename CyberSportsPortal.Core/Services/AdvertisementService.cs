@@ -17,6 +17,8 @@ public class AdvertisementService
 
     public async Task<List<AdvertisingCompany>> GetAdvertisingCompaniesAsync()
     {
-        return await _context.AdvertisingCompanies.ToListAsync();
+        return await _context.AdvertisingCompanies
+            .Include(x => x.AdvertisementPaymentInfos)
+            .ToListAsync();
     }
 }

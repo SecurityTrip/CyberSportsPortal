@@ -14,7 +14,6 @@ public class TeamTasksService
 
         int result = 0;
 
-        // Проверяем null коллекции
         var tournaments = team.TeamTournamentResults ?? Enumerable.Empty<TournamentParticipantInfo>();
 
         foreach (var t in tournaments)
